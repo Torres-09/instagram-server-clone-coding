@@ -7,8 +7,8 @@ spring:
 
   datasource:
     platform: mysql
-    url:  # 변경해주세요
-    username:
-    password:
+    url:  jdbc:mysql://umc-server.cubfejhib2tp.us-east-1.rds.amazonaws.com:3306/UMC_instagram
+    username: admin
+    password: tpghks123
     driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
     # driver-class-name: com.mysql.jdbc.Driver # mysql 5버전

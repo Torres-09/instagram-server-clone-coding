@@ -36,51 +36,21 @@ public class UserController {
 
 
 
-    /**
-     * 회원 조회 API
-     * [GET] /users
-     * 이메일 검색 조회 API
-     * [GET] /users? Email=
-     * @return BaseResponse<GetUserRes>
-     */
-    //Query String
+
+
     @ResponseBody
-    @GetMapping("") // (GET) 127.0.0.1:9000/users
-    public BaseResponse<GetUserRes> getUsers(@RequestParam(required = true) String Email) {
+    @GetMapping("/{userIdx}")
+    public BaseResponse<GetUserFeedRes> getUserFeed(@PathVariable("userIdx")int userIdx) {
         try{
-            // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
-            if(Email.length()==0){
-                return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
-            }
-            // 이메일 정규표현
-            if(!isRegexEmail(Email)){
-                return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
-            }
-            GetUserRes getUsersRes = userProvider.getUsersByEmail(Email);
-            return new BaseResponse<>(getUsersRes);
+
+            GetUserFeedRes getUserFeedRes = userProvider.retrieveUserFeed(userIdx, userIdx);
+            return new BaseResponse<>(getUserFeedRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
 
-    @ResponseBody
-    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/users/:userIdx
-    public BaseResponse<GetUserRes> getUserByIdx(@PathVariable("userIdx")int userIdx) {
-        try{
 
-            GetUserRes getUsersRes = userProvider.getUsersByIdx(userIdx);
-            return new BaseResponse<>(getUsersRes);
-        } catch(BaseException exception){
-            return new BaseResponse<>((exception.getStatus()));
-        }
-    }
-
-    /**
-     * 회원가입 API
-     * [POST] /users
-     * @return BaseResponse<PostUserRes>
-     */
-    // Body
     @ResponseBody
     @PostMapping("") // (POST) 127.0.0.1:9000/users
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
@@ -128,4 +98,17 @@ public class UserController {
         }
     }
 
+
+    // 회원 삭제
+    @ResponseBody
+    @PostMapping("/delete/{userIdx}") // (Patch) 127.0.0.1:9000/users/delete/:userIdx
+    public BaseResponse<String> deleteUser(@PathVariable("userIdx") int userIdx){
+        try {
+            userService.deleteUser(userIdx);
+            String result = "삭제되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 }
