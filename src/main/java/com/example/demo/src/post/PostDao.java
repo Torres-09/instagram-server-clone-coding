@@ -3,7 +3,6 @@ package com.example.demo.src.post;
 
 import com.example.demo.src.post.model.GetPostImgRes;
 import com.example.demo.src.post.model.GetPostsRes;
-import com.example.demo.src.post.model.PatchPostsReq;
 import com.example.demo.src.post.model.PostImgsUrlReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.sound.midi.Patch;
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
@@ -79,13 +79,20 @@ public class PostDao {
     }
 
 
-    public int checkUserExist(int userIdx){
+    public int checkUserExist(int userIdx) throws SQLException{
+        Integer integer = null;
         String checkUserExistQuery = "select exists(select userIdx from User where userIdx = ?)";
         int checkUserExistParams = userIdx;
-        return this.jdbcTemplate.queryForObject(checkUserExistQuery,
-                int.class,
-                checkUserExistParams);
-
+        try {
+            jdbcTemplate.getDataSource().getConnection().commit();
+            integer = this.jdbcTemplate.queryForObject(checkUserExistQuery,
+                    int.class,
+                    checkUserExistParams);
+        } catch (SQLException e) {
+            jdbcTemplate.getDataSource().getConnection().rollback();
+            throw new RuntimeException(e);
+        }
+        return integer;
     }
 
     public int checkPostExist(int postIdx){
