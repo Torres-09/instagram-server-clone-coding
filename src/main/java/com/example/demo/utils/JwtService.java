@@ -2,7 +2,7 @@ package com.example.demo.utils;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.secret.Secret;
+import com.example.demo.config.Secret;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
